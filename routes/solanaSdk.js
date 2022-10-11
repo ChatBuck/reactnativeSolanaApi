@@ -12,6 +12,7 @@ const headers = {
 let globalkeyPair = {}
 let programId = new solanaWeb3.PublicKey("1xHcmkwBTDhesvtvHBB1semu6zz6xWdKNyXetLAmvGT")
 
+
 const establishConnection = async () => {
   rpcUrl = "https://api.devnet.solana.com";
   connection = new solanaWeb3.Connection(rpcUrl, 'confirmed');
@@ -81,27 +82,35 @@ router.post("/generateKeypair", async (req, res) => {
 
 router.post("/requestAirDrop", async (req, res) => {
   establishConnection();
-  let publicKey = req.body.publicKey
+  if (req.body.publicKey === undefined){
+    res.status(500).send({ error: "Invalid public Key" });
+  } else {
+    let airdropSignature = await connection.requestAirdrop(
+      new solanaWeb3.PublicKey(req.body.publicKey),
+      solanaWeb3.LAMPORTS_PER_SOL,
+    );
+  
+    await connection.confirmTransaction(airdropSignature);
+  
+    res.send("AirDropped 1 solana successfully")
+  }
 
-  let airdropSignature = await connection.requestAirdrop(
-    new solanaWeb3.PublicKey(publicKey),
-    solanaWeb3.LAMPORTS_PER_SOL,
-  );
-
-  await connection.confirmTransaction(airdropSignature);
-
-  res.send("AirDropped 1 solana successfully")
+  
 })
 
 router.get("/getBalance", async (req, res) => {
   establishConnection();
-  let publicKey = req.body.publicKey
 
-  let balance = await connection.getBalance(new solanaWeb3.PublicKey(publicKey));
-  console.log(`balance: ${balance / 1000000000}`);
-  res.send({
+  if (req.body.publicKey === undefined){
+    res.status(500).send({ error: "Invalid public Key" });
+  } else {
+    let balance = await connection.getBalance(new solanaWeb3.PublicKey(req.body.publicKey));
+    console.log(`balance: ${balance / 1000000000}`);
+    res.send({
     "balance": balance / 1000000000
   });
+  }
+  
 })
 
 // router.post("/createPDAAccount", async (req, res) => {
