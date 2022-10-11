@@ -74,7 +74,7 @@ router.post("/generateKeypair", async (req, res) => {
   airdropRequest();
   // await createPDAAccount();
   res.send({
-    "publickey": globalkeyPair.publicKey,
+    "publicKey": globalkeyPair.publicKey,
     "privateKey": globalkeyPair.secretKey,
     "keypair": globalkeyPair.keyPair
   })
@@ -92,7 +92,7 @@ router.post("/requestAirDrop", async (req, res) => {
   
     await connection.confirmTransaction(airdropSignature);
   
-    res.send("AirDropped 1 solana successfully")
+    res.send(true)
   }
 
   
