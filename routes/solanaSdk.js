@@ -98,7 +98,7 @@ router.post("/requestAirDrop", async (req, res) => {
   
 })
 
-router.get("/getBalance", async (req, res) => {
+router.post("/getBalance", async (req, res) => {
   establishConnection();
 
   if (req.body.publicKey === undefined){
